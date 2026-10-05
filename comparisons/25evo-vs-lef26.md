@@ -142,3 +142,21 @@ The most valuable change is not “RC is bad and an IC is good.”
 It is the shift from a tightly coupled analog behavior toward more explicitly separated functions.
 
 That changes **what must be measured and verified**.
+
+
+## 9. Concrete circuit details and board-boundary clarification
+
+| Topic | 25EVO studied schematic | LEF-26 studied schematic |
+|---|---|---|
+| Comparator | LM339 open-collector | TLV1812-Q1 push-pull |
+| Conflict node | HIGH when both thresholds exceeded | U9 OR LOW when both exceeded |
+| Timing | R12+R14, C8, U3.4 with feedback | U8 LTC6994-1, falling-edge delay |
+| Sensor window | About 0.49–4.51V | About 0.24–4.85V internally |
+| Final combination | Shared comparator outputs | U3 SN74HC08 AND |
+| Output | Q2/Q3 stage, R26 pull-down | Logic output followed by SDC input path |
+| 10-second request | SDC-side timer in reviewed documentation | U7 on BSPD board sends BSPD+10reset |
+| State retention | SDC revision-dependent latch | SDC relay self-hold described in current team notes |
+
+**Correction:** do not infer that all LEF-26 latch functions are on the BSPD PCB. The supplied 26 BSPD drawing shows a recovery timer; current SDC notes locate relay state retention on SDC. Trace each board and revision separately.
+
+See the updated [25EVO](../schematic-walkthroughs/25evo.md) and [26](../schematic-walkthroughs/lef26.md) image walkthroughs, [improvement review](../system-analysis/improvement-review-ko.md), and [Falstad experiment](../simulations/falstad/README.md).

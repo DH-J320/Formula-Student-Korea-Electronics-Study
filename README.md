@@ -8,6 +8,14 @@ This repository turns team study work into a structured engineering record:
 
 ---
 
+## 한국어 학습 가이드
+
+[처음 읽는 순서와 공부 요약](./docs/learning-guide-ko.md) · [규정과 판정 경로](./safety-circuits/bspd-requirements-ko.md) · [개선 검토](./system-analysis/improvement-review-ko.md) · [실측 기록 양식](./verification/measurement-template-ko.md)
+
+Completed: concrete 25EVO/26 schematic walkthroughs, circuit images, basic notes, RC numerical study and a Falstad diode comparison. Pending: real-hardware measurements and implementation of proposed changes.
+
+---
+
 ## Scope
 
 The main case study is the evolution of the BSPD implementation between **25EVO** and **LEF-26**.
@@ -50,21 +58,16 @@ A BSPD is a safety circuit that checks whether braking, propulsion, and sensor s
 
 In this study, the system is treated as a sequence of engineering decisions:
 
-```text
-Brake / Current Sensors
-          ↓
-Threshold Comparison
-          ↓
-Condition Combination
-          ↓
-Persistence / Timing Check
-          ↓
-Fault State / Latch
-          ↓
-Shutdown Interface
-          ↓
-Vehicle Power Isolation
+```mermaid
+flowchart TD
+  S[Brake and current sensors] --> P[Drive and brake thresholds]
+  S --> W[Sensor voltage windows]
+  P --> T[Conflict persistence timer]
+  T --> F[Fault combination]
+  W --> F
+  F --> O[SDC shutdown request]
 ```
+
 
 A separate path checks whether sensor voltages leave the expected range so that an invalid sensor signal cannot simply be interpreted as a safe condition.
 
@@ -146,7 +149,7 @@ It checks:
 - sensitivity to R/C tolerance,
 - why a fast discharge path reduces repeated-pulse accumulation.
 
-See: [RC Delay Simulation](./simulations/rc-delay/)
+See: [RC Delay Simulation](./simulations/rc-delay/) and [Falstad diode comparison](./simulations/falstad/README.md).
 
 ---
 

@@ -1,96 +1,19 @@
 # BSPD System Overview
 
-## 1. Why the BSPD exists
+BSPD detects sustained strong-braking/propulsion conflicts and relevant system faults, then requests the shutdown circuit to open. SDC and AIR complete the vehicle isolation chain.
 
-The Brake System Plausibility Device (BSPD) is a safety function that decides whether the combination of braking, propulsion, and sensor signals remains plausible.
-
-The key idea is simple:
-
-> A vehicle that is being strongly braked should not continue receiving substantial propulsion for an extended period, and invalid sensor signals must not silently appear safe.
-
----
-
-## 2. System-level signal flow
-
-```text
-Brake Sensor ──────┐
-                   ├─> Threshold / Validity Checks ──┐
-Current Sensor ────┘                                 │
-                                                     ├─> Safety Decision
-Sensor Validity Checks ──────────────────────────────┘
-                                                           ↓
-                                                    Persistence Check
-                                                           ↓
-                                                     Fault / Latch
-                                                           ↓
-                                                    Shutdown Interface
-                                                           ↓
-                                               Vehicle power isolation
+```mermaid
+flowchart TD
+  S[Current and brake sensors] --> D[Drive and brake thresholds]
+  S --> W[Sensor voltage windows]
+  D --> T[Conflict persistence timing]
+  T --> F[Fault combination]
+  W --> F
+  F --> O[Shutdown request]
 ```
 
-This decomposition is more useful than memorizing individual components because each block answers a different engineering question.
+The validity branch bypasses the conflict persistence timer. It is not a prerequisite that sequentially enables the drive/brake test. A voltage-window test also cannot prove physical sensor health.
 
----
+Fault activation persistence and continuous-safe-time recovery are different functions. Board boundaries do not define the whole safety function: trace BSPD output, recovery request, SDC state retention and AIR coil path together.
 
-## 3. The questions each block answers
-
-### Sensor input
-What physical quantity is being measured?
-
-### Threshold comparison
-Has the signal crossed the condition that matters to the safety requirement?
-
-### Sensor validity
-Is the sensor signal itself believable?
-
-### Logic combination
-Which combination of conditions constitutes a fault?
-
-### Timing
-Must the condition persist, or should it cause immediate action?
-
-### Latch / reset
-Should the system remember a fault after the triggering signal disappears?
-
-### Shutdown interface
-How is the safety decision converted into a signal that can safely affect the vehicle power system?
-
----
-
-## 4. Two different fault classes
-
-### Plausibility fault
-A physically unsafe combination persists long enough to be considered real.
-
-Example concept:
-
-```text
-strong braking + substantial drive
-                ↓
-         persistence check
-                ↓
-             shutdown
-```
-
-### Sensor fault
-A sensor voltage leaves its expected electrical range.
-
-```text
-sensor voltage outside valid range
-                ↓
-        immediate fault path
-                ↓
-             shutdown
-```
-
-These paths should be analyzed separately because the timing requirement for a plausibility condition and the reaction to an invalid sensor do not have to be identical.
-
----
-
-## 5. Why this is useful beyond Formula Student
-
-The same reasoning pattern appears in many safety-critical systems:
-
-**measure → validate → decide → time-filter → latch → act → verify**
-
-This is directly transferable to avionics, propulsion-control electronics, battery safety, and other embedded safety systems.
+Start with the [Korean learning guide](./learning-guide-ko.md), [requirement summary](../safety-circuits/bspd-requirements-ko.md), [25EVO walkthrough](../schematic-walkthroughs/25evo.md), and [LEF-26 walkthrough](../schematic-walkthroughs/lef26.md).

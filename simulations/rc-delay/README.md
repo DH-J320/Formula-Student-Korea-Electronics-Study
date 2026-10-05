@@ -35,7 +35,7 @@ But the ideal threshold crossing is:
 
 So “RC = 0.49 s” does **not** mean that the comparator switches at 0.49 s.
 
-![Nominal RC threshold crossing](./rc_delay_nominal.svg)
+![Nominal RC threshold crossing](./rc_delay_nominal.png)
 
 ---
 
@@ -49,7 +49,7 @@ Using the same ideal model:
 | nominal | ~0.624 s |
 | +20% | ~0.749 s |
 
-![Capacitance tolerance sweep](./rc_delay_tolerance.svg)
+![Capacitance tolerance sweep](./rc_delay_tolerance.png)
 
 This is not a full tolerance analysis; it illustrates why an analog timing stage should be verified with actual component values and measurement.
 
@@ -60,6 +60,7 @@ This is not a full tolerance analysis; it illustrates why an analog timing stage
 Run:
 
 ```bash
+python -m pip install -r requirements.txt
 python simulate_rc_delay.py
 ```
 
@@ -79,3 +80,10 @@ The model does not include:
 - PCB leakage/parasitics
 
 It is a first-principles verification, not a substitute for measurement or SPICE analysis.
+
+
+## Resistance plus capacitance corners
+
+Using R ±1% and C ±20% with fixed voltage/threshold gives approximately 0.494–0.756s. This is an ideal corner calculation, not a compliance claim. MLCC DC bias and threshold shifts are omitted.
+
+The numerical script models isolated charging and capacitor tolerance; repeated-pulse diode behavior is provided separately in the [Falstad model](../falstad/README.md).

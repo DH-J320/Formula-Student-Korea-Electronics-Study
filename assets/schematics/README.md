@@ -1,41 +1,15 @@
-# Schematic Assets
+# 회로도 이미지 목록
 
-Circuit images in this folder originate from team project materials and are reproduced **with permission from the team leader**.
+팀장 허락을 받은 팀 BSPD 스케메틱을 학습 해설과 함께 사용한다. 제3자 재사용 권한을 부여하는 공개 라이선스는 아니다. [NOTICE](../../NOTICE.md) 참고.
 
-See [NOTICE.md](../../NOTICE.md) before reusing any image.
+| 파일 | 내용 | 해설 |
+|---|---|---|
+| [25evo-overall.png](./25evo-overall.png) | 25EVO 전체 판정·출력 | [25EVO](../../schematic-walkthroughs/25evo.md) |
+| [25evo-rc-delay.png](./25evo-rc-delay.png) | 임계값·RC·다이오드 | 같은 문서 2절 |
+| [25evo-window-delay.png](./25evo-window-delay.png) | 범위 검사와 최종 결합 | 같은 문서 3절 |
+| [25evo-output-stage.png](./25evo-output-stage.png) | NMOS·PMOS·풀다운 | 같은 문서 4절 |
+| [lef26-threshold-timing.png](./lef26-threshold-timing.png) | 비교기·OR·지연·AND | [26](../../schematic-walkthroughs/lef26.md) |
+| [lef26-delay.png](./lef26-delay.png) | 0.5초 IC 설정 | 같은 문서 2절 |
+| [lef26-recovery-power.png](./lef26-recovery-power.png) | 10초 복귀·입력·레귤레이터 | 같은 문서 4절 |
 
-## Included
-
-### 25EVO
-- [RC timing stage](./25evo-rc-delay.png)
-
-## Prepared for upload
-
-The study documents are already structured for these additional team images:
-
-### 25EVO
-- `25evo-overall.webp`
-- `25evo-output-stage.webp`
-- `25evo-oscilloscope-test.webp`
-
-### LEF-26
-- `lef26-overall.webp`
-- `lef26-threshold-timing.webp`
-- `lef26-latch-shutdown.webp`
-
-These files were extracted from the study materials and prepared locally, but the current GitHub connector cannot directly upload the remaining binary image files.
-
-The markdown analysis is intentionally written so each image can be inserted without restructuring the repository.
-
-## Documentation principle
-
-A schematic should never appear without context.
-
-For each image, the repository should explain:
-
-1. what block is shown,
-2. which signal enters,
-3. what condition is evaluated,
-4. what output is produced,
-5. what failure mode matters,
-6. what should be measured to verify the interpretation.
+원본 그림의 메모도 원본의 일부로 남긴다. 특히 25EVO 출력의 floating 표기는 PMOS 공급 경로와 전체 출력선을 구분하여 해설에서 정정했다. 그림 자체의 텍스트를 새 설계 정보로 수정하지 않았다.

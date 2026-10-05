@@ -7,3 +7,7 @@ Small numerical checks used to test explanations from the circuit study.
 - [RC Delay Simulation](./rc-delay/)
 
 The simulations are deliberately simple and document their assumptions. They are not SPICE replacements or proof of final vehicle behavior.
+
+## Falstad / CircuitJS
+
+[25EVO diode comparison](./falstad/README.md): repeat-input and long-input circuit files, runnable launcher, and model limitations.
