@@ -8,6 +8,33 @@ This repository turns team study work into a structured engineering record:
 
 ---
 
+## 바로 읽기
+
+라이트온 팀 회로 스터디에서 공부한 BSPD를 **요구사항 → 신호 흐름 → 회로 동작 → 차량별 비교 → 계산·시뮬레이션 → 개선 검토** 순서로 정리했다. 실제 설계·제작·실측을 직접 수행했다는 의미는 아니며, 그 단계는 문서에서 별도로 표시한다.
+
+| 읽을 자료 | 담긴 내용 |
+|---|---|
+| [한국어 전체 가이드](./docs/learning-guide-ko.md) | 처음 읽는 순서, 공부하면서 수정한 이해 |
+| [25EVO 회로 해설](./schematic-walkthroughs/25evo.md) | Wired-AND, RC 충전·방전, 센서 이상 감지, MOSFET 출력 |
+| [26 회로 해설](./schematic-walkthroughs/lef26.md) | Push-pull, OR/AND, LTC6994, 10초 복귀 신호 |
+| [25EVO·26 비교](./comparisons/25evo-vs-lef26.md) | 회로 변경, 효과, 장단점, BSPD와 SDC의 역할 경계 |
+| [Falstad 다이오드 비교](./simulations/falstad/README.md) | 짧은 반복 입력과 긴 입력 시험 파일 및 실행법 |
+| [개선안 검토](./system-analysis/improvement-review-ko.md) | 타이머, 윈도우 비교기, 히스테리시스, 전원·센서 진단 |
+
+### 25EVO — 비교기·RC·출력단
+
+![25EVO BSPD 전체 스케메틱](./assets/schematics/25evo-overall.png)
+
+두 임계값을 모두 넘을 때 RC가 충전되고, 별도 센서 범위 검사와 함께 Fault를 판단한다. [그림을 따라 읽기](./schematic-walkthroughs/25evo.md).
+
+### LEF-26 — 비교기·논리 게이트·전용 타이머
+
+![LEF-26 BSPD 판정 스케메틱](./assets/schematics/lef26-threshold-timing.png)
+
+OR 게이트의 LOW가 동시 위험 조건을 나타낸다. 0.5초 지연 경로와 센서 범위 검사 경로는 병렬로 최종 AND에 들어간다. [그림을 따라 읽기](./schematic-walkthroughs/lef26.md).
+
+---
+
 ## 한국어 학습 가이드
 
 [처음 읽는 순서와 공부 요약](./docs/learning-guide-ko.md) · [규정과 판정 경로](./safety-circuits/bspd-requirements-ko.md) · [개선 검토](./system-analysis/improvement-review-ko.md) · [실측 기록 양식](./verification/measurement-template-ko.md)
@@ -75,33 +102,12 @@ A separate path checks whether sensor voltages leave the expected range so that 
 
 ## Design Evolution Studied Here
 
-### 25EVO
-
-```text
-Open-collector comparators
-        ↓
-Wired logic
-        ↓
-RC timing
-        ↓
-Fast discharge path
-        ↓
-Output buffer / SDC interface
-```
-
-### LEF-26
-
-```text
-Push-pull comparators
-        ↓
-Logic gate
-        ↓
-Dedicated timer IC
-        ↓
-Fault / reset logic
-        ↓
-SDC interface
-```
+| Architecture | 25EVO | LEF-26 |
+|---|---|---|
+| Condition combination | Open-collector wired logic | Push-pull comparators and OR gate |
+| Persistence check | RC charge and threshold comparator | Dedicated LTC6994-1 delay IC |
+| Fault combination | Shared open-collector outputs | AND gate |
+| SDC interface | MOSFET output stage | Logic output and separate recovery request |
 
 The engineering value of the comparison is not that one architecture is universally “better”, but that it exposes the trade-offs among **timing accuracy, component tolerance, observability, reset behavior, interface clarity, and verification effort**.
 
