@@ -1,192 +1,226 @@
 # Formula Student Electronics Study 🏎️⚡
 
-A technical study repository documenting my learning from **Formula Student vehicle electronics and safety circuits**, with a focus on the **Brake System Plausibility Device (BSPD)**.
+A personal engineering study of **Formula Student vehicle electronics and safety circuits**, centered on the **Brake System Plausibility Device (BSPD)** and the architectural evolution from **25EVO to LEF-26**.
 
-This repository turns team study work into a structured engineering record:
+> 🇰🇷 Prefer Korean? Start with the [Korean Learning Guide](./docs/learning-guide-ko.md).
 
-**Requirement → Circuit → Signal Flow → Timing → Failure Mode → Verification → Design Comparison**
+This repository is not a dump of team materials. It is a structured record of how I study a real circuit:
 
----
-
-## 바로 읽기
-
-라이트온 팀 회로 스터디에서 공부한 BSPD를 **요구사항 → 신호 흐름 → 회로 동작 → 차량별 비교 → 계산·시뮬레이션 → 개선 검토** 순서로 정리했다. 실제 설계·제작·실측을 직접 수행했다는 의미는 아니며, 그 단계는 문서에서 별도로 표시한다.
-
-| 읽을 자료 | 담긴 내용 |
-|---|---|
-| [한국어 전체 가이드](./docs/learning-guide-ko.md) | 처음 읽는 순서, 공부하면서 수정한 이해 |
-| [25EVO 회로 해설](./schematic-walkthroughs/25evo.md) | Wired-AND, RC 충전·방전, 센서 이상 감지, MOSFET 출력 |
-| [26 회로 해설](./schematic-walkthroughs/lef26.md) | Push-pull, OR/AND, LTC6994, 10초 복귀 신호 |
-| [25EVO·26 비교](./comparisons/25evo-vs-lef26.md) | 회로 변경, 효과, 장단점, BSPD와 SDC의 역할 경계 |
-| [Falstad 다이오드 비교](./simulations/falstad/README.md) | 짧은 반복 입력과 긴 입력 시험 파일 및 실행법 |
-| [개선안 검토](./system-analysis/improvement-review-ko.md) | 타이머, 윈도우 비교기, 히스테리시스, 전원·센서 진단 |
-
-### 25EVO — 비교기·RC·출력단
-
-![25EVO BSPD 전체 스케메틱](./assets/schematics/25evo-overall.png)
-
-두 임계값을 모두 넘을 때 RC가 충전되고, 별도 센서 범위 검사와 함께 Fault를 판단한다. [그림을 따라 읽기](./schematic-walkthroughs/25evo.md).
-
-### LEF-26 — 비교기·논리 게이트·전용 타이머
-
-![LEF-26 BSPD 판정 스케메틱](./assets/schematics/lef26-threshold-timing.png)
-
-OR 게이트의 LOW가 동시 위험 조건을 나타낸다. 0.5초 지연 경로와 센서 범위 검사 경로는 병렬로 최종 AND에 들어간다. [그림을 따라 읽기](./schematic-walkthroughs/lef26.md).
+**Requirement → Signal Flow → Circuit Behavior → Timing → Failure Mode → Verification → Design Comparison**
 
 ---
 
-## 한국어 학습 가이드
+## My Role and Scope
 
-[처음 읽는 순서와 공부 요약](./docs/learning-guide-ko.md) · [규정과 판정 경로](./safety-circuits/bspd-requirements-ko.md) · [개선 검토](./system-analysis/improvement-review-ko.md) · [실측 기록 양식](./verification/measurement-template-ko.md)
+This repository documents what I learned during a **team-wide circuit study**.
 
-Completed: concrete 25EVO/26 schematic walkthroughs, circuit images, basic notes, RC numerical study and a Falstad diode comparison. Pending: real-hardware measurements and implementation of proposed changes.
+I do **not** claim that I independently designed, manufactured, or validated the vehicle BSPD hardware.
 
----
+What I have done here:
 
-## Scope
+- traced the BSPD signal path from schematic material,
+- studied the role of comparators, logic, timing, latches, and output stages,
+- compared two BSPD architectures,
+- reproduced timing calculations,
+- built educational RC and Falstad/CircuitJS models,
+- organized fault-oriented verification questions,
+- separated observations, calculations, simulations, and engineering inferences.
 
-The main case study is the evolution of the BSPD implementation between **25EVO** and **LEF-26**.
+What is still pending:
 
-Topics include:
-
-- Comparator threshold circuits
-- Open-collector vs. push-pull outputs
-- Pull-up / pull-down networks
-- Wired logic
-- RC timing and fast-discharge paths
-- Dedicated timer ICs
-- Sensor open/short detection
-- Latch and reset behavior
-- Shutdown-circuit interfaces
-- Fail-safe design
-- Design evolution and verification
+- direct hardware measurements by me,
+- temperature / tolerance / power-up testing on the real board,
+- physical validation of proposed improvements,
+- full vehicle-level verification.
 
 ---
 
-## Repository Map
+## Key Findings
 
-| Section | Purpose |
-|---|---|
-| [System Overview](./docs/system-overview.md) | BSPD from a vehicle-system perspective |
-| [Fundamentals](./fundamentals/) | Reusable electronics concepts learned during the study |
-| [Safety Circuits](./safety-circuits/) | Fault detection, fail-safe logic, latch/reset, shutdown behavior |
-| [25EVO vs LEF-26](./comparisons/25evo-vs-lef26.md) | Design evolution and architecture comparison |
-| [Schematics](./assets/schematics/) | Team circuit images reproduced with permission |
-| [Schematic Walkthroughs](./schematic-walkthroughs/) | Signal-by-signal reading of 25EVO and LEF-26 |
-| [Simulations](./simulations/) | Small numerical checks and circuit-behavior studies |
-| [Verification](./verification/) | Fault-oriented test matrix and future measurements |
-| [Sources & Notes](./docs/sources-and-notes.md) | Evidence boundaries and interpretation notes |
+### 01 — Logic architecture changed
+
+**25EVO**
+- open-collector comparator outputs,
+- wired logic,
+- passive pull-up behavior is part of the decision path.
+
+**LEF-26**
+- push-pull comparator outputs,
+- explicit OR / AND logic,
+- threshold decision and logic combination are more clearly separated.
+
+The important lesson is not simply “old vs new.”  
+It is how **output topology changes the way logic can be combined and verified**.
 
 ---
 
-## BSPD at a Glance
+### 02 — Timing architecture changed
 
-A BSPD is a safety circuit that checks whether braking, propulsion, and sensor signals remain physically plausible.
+**25EVO**
+- analog RC charging,
+- comparator threshold crossing,
+- diode-assisted fast discharge.
 
-In this study, the system is treated as a sequence of engineering decisions:
+**LEF-26**
+- dedicated LTC6994 timing device,
+- no large capacitor as the primary timing element.
 
-```mermaid
-flowchart TD
-  S[Brake and current sensors] --> P[Drive and brake thresholds]
-  S --> W[Sensor voltage windows]
-  P --> T[Conflict persistence timer]
-  T --> F[Fault combination]
-  W --> F
-  F --> O[SDC shutdown request]
+For the studied 25EVO values:
+
+`R ≈ 49 kΩ`, `C = 10 µF`
+
+so:
+
+`τ = RC ≈ 0.49 s`
+
+But the ideal delay to a 3.6 V threshold from 0 V is about:
+
+`t ≈ 0.624 s`
+
+This was one of the clearest examples of why **a time constant is not automatically the switching delay**.
+
+See: [RC Delay Simulation](./simulations/rc-delay/)
+
+---
+
+### 03 — Sensor validity is a separate safety path
+
+The BSPD must not only detect an implausible braking + propulsion condition.
+
+It must also detect when a sensor signal itself leaves its expected electrical range.
+
+That means the circuit contains two conceptually different paths:
+
+```text
+Brake + drive condition ──> persistence check ──┐
+                                                ├─> fault decision
+Sensor voltage validity ────────────────────────┘
 ```
 
-
-A separate path checks whether sensor voltages leave the expected range so that an invalid sensor signal cannot simply be interpreted as a safe condition.
+This distinction matters because a sensor fault does not necessarily need to wait for the same persistence delay as the physical plausibility condition.
 
 ---
 
-## Design Evolution Studied Here
+### 04 — Recovery is a system-level problem
 
-| Architecture | 25EVO | LEF-26 |
-|---|---|---|
-| Condition combination | Open-collector wired logic | Push-pull comparators and OR gate |
-| Persistence check | RC charge and threshold comparator | Dedicated LTC6994-1 delay IC |
-| Fault combination | Shared open-collector outputs | AND gate |
-| SDC interface | MOSFET output stage | Logic output and separate recovery request |
+The fault detector, shutdown interface, 10-second recovery condition, and state-retention behavior must be understood as a **complete chain**, not only as isolated PCB blocks.
 
-The engineering value of the comparison is not that one architecture is universally “better”, but that it exposes the trade-offs among **timing accuracy, component tolerance, observability, reset behavior, interface clarity, and verification effort**.
+This was especially important when comparing where the BSPD logic ends and where the SDC-side behavior begins.
 
-### Example: 25EVO analog persistence timing
+---
+
+## Evidence Status
+
+| Item | Status |
+|---|---|
+| Schematic interpretation | ✅ Completed |
+| 25EVO ↔ LEF-26 architectural comparison | ✅ Completed |
+| RC first-principles calculation | ✅ Completed |
+| Educational Python model | ✅ Completed |
+| Falstad/CircuitJS comparison model | ✅ Repository model available |
+| Fault-oriented test matrix | ✅ Prepared |
+| Real-board timing measurement by me | ⏳ Pending |
+| Power-up / power-loss measurement | ⏳ Pending |
+| Temperature / tolerance test | ⏳ Pending |
+| Proposed circuit modifications on hardware | ⏳ Pending |
+
+This table is intentional: **simulation and documentation are not presented as hardware validation**.
+
+---
+
+## Schematic Study
+
+The circuit images are included with permission from the team leader for educational and portfolio documentation.
+
+### 25EVO — RC timing stage
 
 ![25EVO RC timing stage](./assets/schematics/25evo-rc-delay.png)
 
-Rather than treating the schematic as an illustration, the walkthrough traces the charging path, comparator threshold, fast-discharge path, and the measurements needed to verify the explanation.
+[Read the 25EVO walkthrough →](./schematic-walkthroughs/25evo.md)
 
-See: [25EVO Schematic Walkthrough](./schematic-walkthroughs/25evo.md)
+### LEF-26 — threshold and timing architecture
 
----
+![LEF-26 threshold and timing circuit](./assets/schematics/lef26-threshold-timing.png)
 
-## Selected Study Notes
+[Read the LEF-26 walkthrough →](./schematic-walkthroughs/lef26.md)
 
-### Fundamentals
-- [Comparator Basics](./fundamentals/comparator-basics.md)
-- [Open-Collector vs Push-Pull](./fundamentals/open-collector-vs-push-pull.md)
-- [Pull-Up, Pull-Down, and Floating Nodes](./fundamentals/pull-up-pull-down.md)
-- [RC Timing Circuits](./fundamentals/rc-timing.md)
-- [Latch and Reset Logic](./fundamentals/latch-and-reset.md)
-
-### Safety / System Analysis
-- [BSPD System Analysis](./safety-circuits/bspd-system-analysis.md)
-- [Sensor Fault Detection](./safety-circuits/sensor-fault-detection.md)
-- [Fail-Safe Design Principles](./safety-circuits/fail-safe-design.md)
-
-### Comparison
-- [25EVO vs LEF-26](./comparisons/25evo-vs-lef26.md)
-
-### Walkthrough & Verification
-- [25EVO Schematic Walkthrough](./schematic-walkthroughs/25evo.md)
-- [LEF-26 Schematic Walkthrough](./schematic-walkthroughs/lef26.md)
-- [BSPD Verification Test Matrix](./verification/test-matrix.md)
+> Full schematic assets and reuse notes are documented in [assets/schematics](./assets/schematics/) and [NOTICE.md](./NOTICE.md).
 
 ---
 
-## Verification Project
+## Repository Guide
 
-The first small verification project models the **25EVO RC timing stage** using an idealized RC model.
-
-It checks:
-
-- the difference between the RC time constant and actual threshold-crossing time,
-- sensitivity to R/C tolerance,
-- why a fast discharge path reduces repeated-pulse accumulation.
-
-See: [RC Delay Simulation](./simulations/rc-delay/) and [Falstad diode comparison](./simulations/falstad/README.md).
-
----
-
-## Documentation Rule
-
-For every circuit or concept, I try to answer:
-
-1. What requirement is being satisfied?
-2. What signal enters the block?
-3. What physical/electrical decision is made?
-4. What is the output state?
-5. What happens if a sensor or component fails?
-6. How can the behavior be verified?
-7. What assumptions or uncertainties remain?
+| Section | Purpose |
+|---|---|
+| [Korean Learning Guide](./docs/learning-guide-ko.md) | Recommended reading order and study corrections |
+| [System Overview](./docs/system-overview.md) | BSPD from a vehicle-system perspective |
+| [Fundamentals](./fundamentals/) | Reusable electronics concepts |
+| [Safety Circuits](./safety-circuits/) | Fault detection, fail-safe logic, shutdown behavior |
+| [25EVO Walkthrough](./schematic-walkthroughs/25evo.md) | Signal-by-signal interpretation |
+| [LEF-26 Walkthrough](./schematic-walkthroughs/lef26.md) | Signal-by-signal interpretation |
+| [25EVO vs LEF-26](./comparisons/25evo-vs-lef26.md) | Architecture and design trade-offs |
+| [RC Simulation](./simulations/rc-delay/) | First-principles timing model |
+| [Falstad Comparison](./simulations/falstad/) | Educational repeated-pulse comparison |
+| [Verification](./verification/) | Test matrix and measurement template |
+| [Improvement Review](./system-analysis/improvement-review-ko.md) | Questions for future design improvement |
+| [Sources & Notes](./docs/sources-and-notes.md) | Evidence boundaries and interpretation rules |
 
 ---
 
-## Disclosure / Permission
+## Reusable Concepts Learned
 
-The schematic images in this repository originate from team project materials and are reproduced here **with permission from the team leader** for educational and portfolio documentation.
+- comparator threshold circuits
+- open-collector vs push-pull outputs
+- pull-up / pull-down behavior
+- wired logic
+- RC timing and threshold crossing
+- fast-discharge paths
+- timer ICs
+- sensor open/short detection
+- latch / reset behavior
+- shutdown interfaces
+- power-loss default states
+- fail-safe reasoning
 
-Their presence in this public repository does **not** imply an open-source license or permission for third-party reuse.
+These notes are kept separate from the vehicle-specific walkthroughs so the knowledge remains useful in future embedded, avionics, and safety-system work.
+
+---
+
+## Verification Mindset
+
+For each block, I try to answer:
+
+1. What requirement is this block satisfying?
+2. What signal enters it?
+3. What electrical decision is being made?
+4. What output state should appear?
+5. What happens if a wire opens or shorts?
+6. What happens during power loss?
+7. How could I verify the explanation?
+8. What assumptions remain untested?
+
+This is the main reason this repository exists.
+
+---
+
+## Disclosure
+
+The schematic images originate from team project materials and are reproduced here **with permission from the team leader** for educational and portfolio documentation.
+
+Their presence in this public repository does **not** grant third-party reuse rights or imply that the designs are open source.
 
 See [NOTICE.md](./NOTICE.md).
 
 ---
 
-## Why This Repository Exists
+## Engineering Takeaway
 
-My goal is not to archive slides.
+The most valuable part of this study was not memorizing a BSPD circuit.
 
-It is to convert project participation into a reusable engineering knowledge base and to show how I move from:
+It was learning to move from:
 
-**reading a circuit → understanding signal flow → questioning design choices → verifying behavior → documenting limitations.**
+**“What does this component do?”**
+
+to:
+
+**“What requirement is this block satisfying, how can it fail, and what evidence would prove my explanation?”**
