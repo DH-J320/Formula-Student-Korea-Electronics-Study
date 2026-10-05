@@ -22,7 +22,7 @@ What I have done here:
 - studied the role of comparators, logic, timing, latches, and output stages,
 - compared two BSPD architectures,
 - reproduced timing calculations,
-- built educational RC and Falstad/CircuitJS models,
+- documented first-principles RC checks and educational RC / Falstad-CircuitJS models,
 - organized fault-oriented verification questions,
 - separated observations, calculations, simulations, and engineering inferences.
 
