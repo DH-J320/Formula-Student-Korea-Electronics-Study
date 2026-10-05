@@ -37,7 +37,9 @@ Topics include:
 | [Safety Circuits](./safety-circuits/) | Fault detection, fail-safe logic, latch/reset, shutdown behavior |
 | [25EVO vs LEF-26](./comparisons/25evo-vs-lef26.md) | Design evolution and architecture comparison |
 | [Schematics](./assets/schematics/) | Team circuit images reproduced with permission |
+| [Schematic Walkthroughs](./schematic-walkthroughs/) | Signal-by-signal reading of 25EVO and LEF-26 |
 | [Simulations](./simulations/) | Small numerical checks and circuit-behavior studies |
+| [Verification](./verification/) | Fault-oriented test matrix and future measurements |
 | [Sources & Notes](./docs/sources-and-notes.md) | Evidence boundaries and interpretation notes |
 
 ---
@@ -100,6 +102,14 @@ SDC interface
 
 The engineering value of the comparison is not that one architecture is universally “better”, but that it exposes the trade-offs among **timing accuracy, component tolerance, observability, reset behavior, interface clarity, and verification effort**.
 
+### Example: 25EVO analog persistence timing
+
+![25EVO RC timing stage](./assets/schematics/25evo-rc-delay.png)
+
+Rather than treating the schematic as an illustration, the walkthrough traces the charging path, comparator threshold, fast-discharge path, and the measurements needed to verify the explanation.
+
+See: [25EVO Schematic Walkthrough](./schematic-walkthroughs/25evo.md)
+
 ---
 
 ## Selected Study Notes
@@ -118,6 +128,11 @@ The engineering value of the comparison is not that one architecture is universa
 
 ### Comparison
 - [25EVO vs LEF-26](./comparisons/25evo-vs-lef26.md)
+
+### Walkthrough & Verification
+- [25EVO Schematic Walkthrough](./schematic-walkthroughs/25evo.md)
+- [LEF-26 Schematic Walkthrough](./schematic-walkthroughs/lef26.md)
+- [BSPD Verification Test Matrix](./verification/test-matrix.md)
 
 ---
 
