@@ -29,19 +29,41 @@ Nominal parameters used:
 
 `τ = RC ≈ 0.49 s`
 
-But the ideal threshold crossing is approximately:
+But the ideal threshold crossing is:
 
-`tTH = -RC ln(1 - VTH/VFINAL) ≈ 0.62 s`
+`tTH = -RC ln(1 - VTH/VFINAL) ≈ 0.624 s`
 
-This shows why simply reading “RC = 0.49 s” does not prove that the circuit switches at 0.49 s.
+So “RC = 0.49 s” does **not** mean that the comparator switches at 0.49 s.
+
+![Nominal RC threshold crossing](./rc_delay_nominal.svg)
 
 ---
 
-## Files
+## Simple capacitance sensitivity
 
-- [simulate_rc_delay.py](./simulate_rc_delay.py) — reproduces the ideal charging and tolerance sweep
-- `rc_delay_nominal.png` — generated voltage/time plot
-- `rc_delay_tolerance.png` — simple capacitance tolerance comparison
+Using the same ideal model:
+
+| Capacitance | Threshold crossing |
+|---|---:|
+| -20% | ~0.499 s |
+| nominal | ~0.624 s |
+| +20% | ~0.749 s |
+
+![Capacitance tolerance sweep](./rc_delay_tolerance.svg)
+
+This is not a full tolerance analysis; it illustrates why an analog timing stage should be verified with actual component values and measurement.
+
+---
+
+## Reproduce
+
+Run:
+
+```bash
+python simulate_rc_delay.py
+```
+
+The script uses NumPy and Matplotlib and can generate higher-resolution raster plots locally.
 
 ---
 
@@ -56,4 +78,4 @@ The model does not include:
 - temperature
 - PCB leakage/parasitics
 
-It is a first-principles verification, not a substitute for measurement.
+It is a first-principles verification, not a substitute for measurement or SPICE analysis.
