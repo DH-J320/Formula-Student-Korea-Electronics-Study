@@ -51,4 +51,4 @@
 - Falstad / CircuitJS 공식 시뮬레이터: https://www.falstad.com/circuit/circuitjs.html
 - CircuitJS 공식 소스: https://github.com/pfalstad/circuitjs1
 
-제작 및 브라우저 동작 확인: 2026-09-27.
+이 파일들은 회로 동작을 이해하기 위한 교육용 모델이다. 실제 차량 하드웨어 실측이나 검증 결과로 해석하지 않는다.
